@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/**
+ * TDProject_Project
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ */
+-->
+<struts-config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://www.techdivision.com/schema/struts-config-2.1.1.xsd">
+    <message-resources key="Report" name="Application" path="TDProject/Report/WEB-INF"/>
+    <form-beans>
+        <form-bean include="TDProject/Report/Block/Report/View.php" name="reportForm" type="TDProject_Report_Block_Report_View"/>
+        <form-bean include="TDProject/Report/Block/Report/View/Input.php" name="reportInputForm" type="TDProject_Report_Block_Report_View_Input"/>
+        <form-bean include="TDProject/Report/Block/ReportField/View.php" name="reportFieldForm" type="TDProject_Report_Block_ReportField_View"/>
+    </form-beans>    
+    <global-forwards/>
+    <action-mappings>
+        <action path="/report" name="reportForm" type="TDProject_Report_Controller_Report" scope="request" input="" parameter="method" validate="false" include="TDProject/Report/Controller/Report.php" unknown="false">
+            <forward name="ReportOverview" path="TDProject_Report_Block_Report_Overview" redirect="false"/>
+            <forward name="ReportView" path="TDProject_Report_Block_Report_View" redirect="false"/>
+        </action>
+        <action path="/downloadReport" name="" type="TDProject_Report_Controller_Report_Download" scope="request" input="" parameter="method" validate="false" include="TDProject/Report/Controller/Report/Download.php" unknown="false">
+            <forward name="Download" path="TDProject_Report_Block_Report_Download" redirect="false"/>
+        </action>
+        <action path="/renderReport" name="reportInputForm" type="TDProject_Report_Controller_Report_View" scope="request" input="" parameter="method" validate="false" include="TDProject/Report/Controller/Report/View.php" unknown="false">
+            <forward name="Input" path="TDProject_Report_Block_Report_View_Input" redirect="false"/>
+            <forward name="Render" path="TDProject_Report_Block_Report_Render" redirect="false"/>
+        </action>
+        <action path="/reportField" name="reportFieldForm" type="TDProject_Report_Controller_ReportField" scope="request" input="" parameter="method" validate="false" include="TDProject/Report/Controller/ReportField.php" unknown="false">
+            <forward name="ReportFieldView" path="TDProject_Report_Block_ReportField_View" redirect="false"/>
+            <forward name="Redirect" path="TDProject_Report_Block_ReportField_Redirect" redirect="false"/>
+        </action>
+        <action path="/report/view" name="" type="TDProject_Report_Controller_Report_View" scope="request" input="" parameter="method" validate="false" include="TDProject/Report/Controller/Report/View.php" unknown="false">
+            <forward name="Render" path="TDProject_Report_Block_Report_Render" redirect="false"/>
+        </action>
+    </action-mappings>
+</struts-config>

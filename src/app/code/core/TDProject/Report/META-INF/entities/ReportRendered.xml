@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/**
+ * TDProject_Project
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ */
+-->
+<entity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.techdivision.com/schema/entity-1.0.0.xsd"
+	name="ReportRendered" type="entity">
+    <description>This class represents an object oriented way to manipulate data in the database.</description>
+    <members>
+        <member name="reportRenderedId" sqlname="report_rendered_id" type="Integer" initial="0"/>
+        <member name="reportIdFk" sqlname="report_id_fk" type="Integer" initial="0"/>
+        <member name="userIdFk" sqlname="user_id_fk" type="Integer" initial="0"/>
+        <member name="username" sqlname="username" type="String" initial="0"/>
+        <member name="filename" sqlname="filename" type="String" initial="0"/>
+        <member name="format" sqlname="format" type="String" initial="0"/>
+        <member name="createdAt" sqlname="created_at" type="Integer" initial="0"/>
+	</members>
+	<querys>
+		<query>
+			<description><![CDATA[Returns all rendered reports.]]></description>
+			<method name="findAll">
+				<params/>
+			</method>
+			<result-type>ArrayList</result-type>
+			<sql><![CDATA[SELECT report_rendered_id FROM report_rendered]]></sql>
+		</query>
+		<query>
+			<description><![CDATA[Returns the reports rendered with the passed report ID.]]></description>
+			<method name="findAllByReportIdFk">
+				<params>
+					<param name="reportIdFk" type="Integer"/>
+				</params>
+			</method>
+			<result-type>ArrayList</result-type>
+			<sql><![CDATA[SELECT report_rendered_id FROM report_rendered WHERE report_id_fk = ? ORDER BY created_at DESC]]></sql>
+		</query>
+		<query>
+			<description><![CDATA[Returns the reports rendered with the passed user ID.]]></description>
+			<method name="findAllByUserIdFk">
+				<params>
+					<param name="userIdFk" type="Integer"/>
+				</params>
+			</method>
+			<result-type>ArrayList</result-type>
+			<sql><![CDATA[SELECT report_rendered_id FROM report_rendered WHERE user_id_fk = ?]]></sql>
+		</query>
+	</querys>
+	<references>
+		<reference name="report-rendered-has-report">
+			<method-name>Report</method-name>
+			<multiplicity>one</multiplicity>
+			<source>
+				<entity-name>Report</entity-name>
+			</source>
+			<target>
+				<member-name>reportIdFk</member-name>
+			</target>
+		</reference>
+	</references>
+	<tables>
+		<table type="InnoDB" default-charset="utf8" collate="utf8_unicode_ci" auto-increment="1" name="report_rendered">
+			<keys>
+				<pk name="report_rendered_pk" field="report_rendered_id"/>
+				<index name="report_rendered_idx_01" field="report_id_fk"/>
+				<index name="report_rendered_idx_02" field="user_id_fk"/>
+				<fk name="report_rendered_fk_01" field="report_id_fk" target-table="report" target-field="report_id" on-delete="cascade"/>
+				<fk name="report_rendered_fk_02" field="user_id_fk" target-table="user" target-field="user_id" on-delete="cascade"/>
+			</keys>	
+			<fields>
+				<field name="report_rendered_id" type="int" length="10" nullable="false" autoincrement="true"/>
+				<field name="report_id_fk" type="int" length="10" nullable="false"/>
+				<field name="user_id_fk" type="int" length="10" nullable="false"/>
+                <field name="username" type="varchar" length="45" nullable="false"/>
+                <field name="filename" type="varchar" length="10" nullable="false"/>
+                <field name="format" type="enum" length="'pdf','html'" nullable="false"/>
+				<field name="created_at" type="int" length="10" nullable="false"/>
+			</fields>
+		</table>
+	</tables>
+</entity>

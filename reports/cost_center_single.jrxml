@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cost_center_single" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.jasperserver.reportUnit" value="/reports/tdproject/cost_center_single"/>
+	<property name="ireport.jasperserver.url" value="http://project.tdintern.de:8080/jasperserver/services/repository"/>
+	<parameter name="FROM_DATE" class="java.util.Date"/>
+	<parameter name="TO_DATE" class="java.util.Date"/>
+	<parameter name="COSTCENTER" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[212]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT
+   d.*,
+   FROM_UNIXTIME(d.`from`, '%Y-%m-%d %H:%i') AS started,
+   FROM_UNIXTIME(d.`until`, '%Y-%m-%d %H:%i') AS ended,
+   c.`billable`
+FROM
+   `project` a,
+   `project_task` b,
+   `task` c,
+   `task_user` d
+WHERE
+   a.`deleted` = 0 AND
+   b.`project_id_fk` = a.`project_id` AND
+   c.`cost_center` = $P{COSTCENTER} AND
+   c.`task_id_fk` = b.`task_id_fk` AND
+   d.`task_id_fk` = c.`task_id` AND
+   d.`from` > UNIX_TIMESTAMP($P{FROM_DATE}) AND
+   d.`until` < UNIX_TIMESTAMP($P{TO_DATE}) + 86400
+ORDER BY
+   c.`billable` ASC,
+   d.`project_id_fk` ASC,
+   d.`task_id_fk` ASC]]>
+	</queryString>
+	<field name="task_user_id" class="java.lang.Integer"/>
+	<field name="task_id_fk" class="java.lang.Integer"/>
+	<field name="user_id_fk" class="java.lang.Integer"/>
+	<field name="project_id_fk" class="java.lang.Integer"/>
+	<field name="task_name" class="java.lang.String"/>
+	<field name="project_name" class="java.lang.String"/>
+	<field name="username" class="java.lang.String"/>
+	<field name="description" class="java.lang.String"/>
+	<field name="from" class="java.lang.Integer"/>
+	<field name="until" class="java.lang.Integer"/>
+	<field name="to_book" class="java.lang.Integer"/>
+	<field name="to_account" class="java.lang.Integer"/>
+	<field name="costs" class="java.lang.Integer"/>
+	<field name="issue" class="java.lang.String"/>
+	<field name="started" class="java.lang.String"/>
+	<field name="ended" class="java.lang.String"/>
+	<field name="billable" class="java.lang.Boolean"/>
+	<variable name="SUM_TO_BOOK" class="java.math.BigDecimal" resetType="Group" resetGroup="task_id_fk" calculation="Sum">
+		<variableExpression><![CDATA[$F{to_book} / 60]]></variableExpression>
+	</variable>
+	<variable name="SUM_TO_ACCOUNT" class="java.math.BigDecimal" resetType="Group" resetGroup="task_id_fk" calculation="Sum">
+		<variableExpression><![CDATA[$F{to_account} / 60]]></variableExpression>
+	</variable>
+	<group name="billable">
+		<groupExpression><![CDATA[$F{billable}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="0" y="0" width="398" height="20"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{billable} ) ? "Abrechenbar" : "Nicht abrechenbar"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="project_id_fk" keepTogether="true">
+		<groupExpression><![CDATA[$F{project_id_fk}]]></groupExpression>
+		<groupHeader>
+			<band height="20">
+				<textField>
+					<reportElement x="12" y="0" width="790" height="20"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{project_name}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+	</group>
+	<group name="task_id_fk" keepTogether="true">
+		<groupExpression><![CDATA[$F{task_id_fk}]]></groupExpression>
+		<groupHeader>
+			<band height="42">
+				<textField>
+					<reportElement x="23" y="0" width="779" height="20"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="11" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{task_name}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="35" y="20" width="100" height="20"/>
+					<textElement>
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Benutzer]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="576" y="20" width="113" height="20"/>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Gebucht (min)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="689" y="20" width="113" height="20"/>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Abzurechnen (min)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="376" y="20" width="100" height="20"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[von]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="476" y="20" width="100" height="20"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<text><![CDATA[bis]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="135" y="20" width="241" height="20"/>
+					<textElement>
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Tätigkeit]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="21">
+				<textField>
+					<reportElement x="576" y="0" width="113" height="20"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_TO_BOOK}.setScale(2, BigDecimal.ROUND_UP)]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="689" y="0" width="113" height="20"/>
+					<textElement textAlignment="Right">
+						<font isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{SUM_TO_ACCOUNT}.setScale(2, BigDecimal.ROUND_UP)]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<title>
+		<band height="59" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="14" width="336" height="32"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Kostenstellenübersicht]]></text>
+			</staticText>
+			<image>
+				<reportElement x="602" y="0" width="200" height="46"/>
+				<imageExpression><![CDATA["repo:signatur_logo.gif"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="802" height="20"/>
+				<textElement markup="none">
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Abrechnungszeitraum: " + DateFormat.getDateInstance(DateFormat.MEDIUM).format($P{FROM_DATE}) + " - " + DateFormat.getDateInstance(DateFormat.MEDIUM).format($P{TO_DATE})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField>
+				<reportElement x="576" y="0" width="113" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{to_book} / 60).setScale(2, BigDecimal.ROUND_UP)]]></textFieldExpression>
+			</textField>
+			<textField pattern="">
+				<reportElement x="689" y="0" width="113" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($F{to_account} / 60).setScale(2, BigDecimal.ROUND_UP)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="376" y="1" width="100" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{started}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="476" y="0" width="100" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ended}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="35" y="1" width="100" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{username}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="135" y="1" width="241" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

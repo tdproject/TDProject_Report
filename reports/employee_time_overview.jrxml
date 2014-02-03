@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="employee_time_overview" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="FROM_DATE" class="java.util.Date"/>
+	<parameter name="TO_DATE" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[SELECT
+  t1.*,
+  t3.billable,
+  SUM(t2.until - t2.from) / 3600 AS hours
+FROM
+  user t1,
+  task_user t2,
+  task t3
+WHERE
+  t2.user_id_fk = t1.user_id AND
+  t2.from >= UNIX_TIMESTAMP($P{FROM_DATE}) AND
+  t2.from < UNIX_TIMESTAMP($P{TO_DATE}) AND
+  t3.task_id = t2.task_id_fk
+GROUP BY
+  t3.billable, t1.user_id
+ORDER BY
+  t1.user_id, t3.billable]]>
+	</queryString>
+	<field name="user_id" class="java.lang.Long"/>
+	<field name="email" class="java.lang.String"/>
+	<field name="username" class="java.lang.String"/>
+	<field name="locale" class="java.lang.String"/>
+	<field name="password" class="java.lang.String"/>
+	<field name="enabled" class="java.lang.Integer"/>
+	<field name="rate" class="java.lang.Long"/>
+	<field name="contracted_hours" class="java.lang.Long"/>
+	<field name="ldap_synced" class="java.lang.Integer"/>
+	<field name="synced_at" class="java.lang.Long"/>
+	<field name="billable" class="java.lang.Integer"/>
+	<field name="hours" class="java.math.BigDecimal"/>
+	<variable name="PAGE_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{hours}]]></variableExpression>
+	</variable>
+	<variable name="EMPLOYEE_SUM" class="java.math.BigDecimal" resetType="Group" resetGroup="Employee" calculation="Sum">
+		<variableExpression><![CDATA[$F{hours}]]></variableExpression>
+	</variable>
+	<variable name="PAGE_SUM_BILLABLE" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[( $F{billable} ) ? $F{hours} : 0.00]]></variableExpression>
+	</variable>
+	<variable name="EMPLOYEE_SUM_BILLABLE" class="java.math.BigDecimal" resetType="Group" resetGroup="Employee" calculation="Sum">
+		<variableExpression><![CDATA[( $F{billable} ) ? $F{hours} : 0.00]]></variableExpression>
+	</variable>
+	<group name="Employee" keepTogether="true">
+		<groupExpression><![CDATA[$F{user_id}]]></groupExpression>
+		<groupHeader>
+			<band height="22">
+				<textField>
+					<reportElement x="0" y="0" width="117" height="20"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="12" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$F{username}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="702" y="0" width="100" height="20"/>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<text><![CDATA[Stunden]]></text>
+				</staticText>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="28">
+				<textField>
+					<reportElement x="702" y="0" width="100" height="20"/>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$V{EMPLOYEE_SUM}.setScale(2, BigDecimal.ROUND_UP)]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="656" y="0" width="46" height="20"/>
+					<textElement>
+						<font fontName="DejaVu Sans" isBold="true" isItalic="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $V{EMPLOYEE_SUM} > 0 ) ? " (" + ( $V{EMPLOYEE_SUM_BILLABLE} / $V{EMPLOYEE_SUM} ).setScale(2, BigDecimal.ROUND_UP) + ")" : " (0)" ]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="537" y="0" width="119" height="20"/>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" isBold="true" isItalic="true"/>
+					</textElement>
+					<text><![CDATA[Mitarbeiter Gesamt]]></text>
+				</staticText>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="50" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="390" height="34"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="24" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Mitarbeiterzeiten]]></text>
+			</staticText>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="35" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="802" height="20"/>
+				<textElement markup="none">
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Auswertungszeitraum: " + DateFormat.getDateInstance(DateFormat.MEDIUM).format($P{FROM_DATE}) + " - " + DateFormat.getDateInstance(DateFormat.MEDIUM).format($P{TO_DATE})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21" splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="22" splitType="Stretch">
+			<textField>
+				<reportElement x="702" y="0" width="100" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{hours}.setScale(2, BigDecimal.ROUND_UP)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="2" width="398" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA[( $F{billable} ) ? "Abrechenbar" : "Nicht abrechenbar"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="24" splitType="Stretch">
+			<textField>
+				<reportElement x="702" y="0" width="100" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_SUM}.setScale(2, BigDecimal.ROUND_UP)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="583" y="0" width="119" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Übertrag]]></text>
+			</staticText>
+		</band>
+	</pageFooter>
+	<lastPageFooter>
+		<band height="50">
+			<textField>
+				<reportElement x="702" y="30" width="100" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_SUM}.setScale(2, BigDecimal.ROUND_UP)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="583" y="30" width="119" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Gesamt]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="702" y="10" width="100" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{PAGE_SUM_BILLABLE}.setScale(2, BigDecimal.ROUND_UP)]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="583" y="10" width="119" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Gesamt abrechenbar]]></text>
+			</staticText>
+		</band>
+	</lastPageFooter>
+</jasperReport>

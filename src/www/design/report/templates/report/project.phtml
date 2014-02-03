@@ -1,0 +1,85 @@
+<?php
+ 
+/**
+ * TDProject_Project
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ */
+
+?>
+<script type="text/javascript">
+
+	$(document).ready(function() {
+	    $("#accordion").accordion();
+	});
+    
+</script>
+<fieldset class="ui-widget ui-widget-content ui-corner-all">
+    <legend>Berichte</legend>    
+    <div id="accordion">
+	    <h3>
+	    	<a href="#">Taskliste</a>
+	    </h3>
+	    <div>
+	    	<a target="_blank" onclick="window.location='<?php echo $this->getReportViewUrl(TDProject_Report_Common_Helper_Unit::TASK_OVERVIEW); ?>';" href="#">Taskliste</a>
+		</div>
+	    <h3>
+	    	<a href="#">Stundenauswertung</a>
+	    </h3>
+	    <div>
+	    	<script type="text/javascript">
+
+		    	$(function () {
+	
+		        	var hoursForm = $("#hoursForm");
+		            
+		            $("#report-1", hoursForm).click(function() {
+		            	
+		            	var dataString = 
+			            	'params[from]=' + $("#from", hoursForm).val() + 
+		            		'&params[until]=' + $("#until", hoursForm).val() + 
+		            		'<?php echo $this->getReportViewParams('Dummy'); ?>';
+	
+		            	$.ajax({
+		            	    type: "POST",
+		            	    url: "?path=/report/view&replacePackage=0",
+		            	    data: dataString,
+		            	    success: function() {
+		            	       window.alert(dataString);
+		            	    }
+		            	});
+		            	
+		            	return false;
+		            });
+		            
+		        });
+		        
+	    	</script>
+    		<form id="hoursForm" name="hoursForm">
+	    		<div class="type-text">
+		        	<label for="from">von: *</label> 
+		        	<input type="text" name="from" id="from" />
+		        </div>
+	    		<div class="type-text">
+		        	<label for="until">von: *</label> 
+		        	<input type="text" name="until" id="until" />
+		        </div>
+		        <div class="type-text">
+		        	<label for="userIdFk">Benutzer:</label>
+		        	<select name="userIdFk" id="userIdFk">
+		        		<options><?php $users = $this->getUsers(); for ($i = 0; $i < $users->size(); $i++) { ?>
+		        			<option value="<?php echo $users->get($i)->getUserId(); ?>"><?php echo $users->get($i)->getUsername() ?></option><?php } ?>
+		        		</options>
+		        	</select>
+		        </div>
+		    	<div class="type-button">
+		    		<input type="button" id="report-1" value="Ausgeben" />
+		    	</div>
+    		</form>
+		</div>
+	</div>
+</fieldset>

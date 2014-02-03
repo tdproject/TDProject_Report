@@ -1,0 +1,66 @@
+<script type="text/javascript">
+<!--
+$(function() {
+	
+	// listener when the selected project changes
+	$('#projectIdFk').change(function() {
+		loadTasks($('#projectIdFk :selected').val(), 0);
+	});
+
+	return false;
+});
+
+/**
+ * Loads the task for the passed project ID and
+ * marks the one with the passed task ID selected.
+ *
+ * @param projectId The ID of the project to load the tasks for
+ * @param taskId The ID of the selected task
+ * @return void
+ */
+function loadTasks(projectId) {
+	 
+ 	// initialize the TreeView and the plugins
+    $("#tasks")
+        .jstree({
+        	"json_data" : {
+        		"ajax" : {
+        			"url" : "?path=/task/json/project",
+        			"data" : function (n) {
+        				return { id : n.attr ? n.attr("id") : projectId };
+        			},
+        			"success" : function (data) {
+            			return data.d;
+            		},
+        			"failure" : function (data) {
+            			return data.d;
+            		}
+        		}
+        	},
+        	"plugins" : [ "json_data", "ui", "themeroller" ]
+        })
+		// set the task ID in the hidden input field
+		.bind('select_node.jstree', function(e, data) {
+			$('input[name=<?php echo $this->getBlockName() ?>]').val(data.rslt.obj.attr("id").replace("task_", ""));
+        });
+
+	return false;
+}
+//-->
+</script>
+<label for="projectIdFk" class="<?php echo $this->getCssClass() ?>">
+	<span class="title"><?php echo $this->getBlockTitle() ?>:</span><?php if ($this->isMandatory()) { ?>&nbsp;<span class="required">*</span><?php } ?>
+</label>
+<select
+	style="width: <?php echo $this->getWidth() ?>px"
+	id="projectIdFk"
+	name="projectIdFk"
+	<?php if ($this->isDisabled()) { ?> disabled="disabled"<?php } ?>>
+	<?php if ($this->hasDummyOption()) { ?><option value="0">Keine Zuordnung</option><?php } foreach ($this->getOptions() as $option) { ?>
+	<option value="<?php echo $this->getOptionValue($option) ?>" <?php if ($this->isSelected($option)) { ?>selected="selected"<?php } ?>><?php echo $this->getOptionLabel($option) ?></option>
+<?php } ?></select>
+
+<input type="hidden" id="<?php echo $this->getBlockName() ?>" name="<?php echo $this->getBlockName() ?>" />
+
+<!-- Tasks loaded by a AJAX call depending on the selected project -->
+<div id="tasks" class="tasks"></div>

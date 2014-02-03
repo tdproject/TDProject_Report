@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!-- 
+/**
+ * TDProject_Report
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ */
+-->
+<processor xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.techdivision.com/schema/session-1.0.0.xsd"
+	name="DomainProcessor" type="session" default-application="report"
+	deployment-descriptor="TDProject/META-INF/deployment-descriptor.xml">
+	<description>This class represents an object oriented way to manipulate data in the database.</description>
+	<methods>
+		<method name="getReportOverviewData" type="abstract">
+            <description><![CDATA[This method returns all reports located in the passed folder.]]></description>
+            <params/>
+            <return type="TechDivision_Collections_ArrayList">
+                <description><![CDATA[Returns a ArrayList with all reports in the passed folder.]]></description>
+            </return>
+        </method>
+		<method name="getReportViewData" type="abstract">
+            <description><![CDATA[This method returns the requested report as VO.]]></description>
+            <params>
+            	<param name="reportId" type="TechDivision_Lang_Integer" default="null">
+            		<description><![CDATA[The ID of the requested report]]></description>
+            	</param>
+            </params>
+            <return type="TDProject_Report_Common_ValueObjects_ReportViewData">
+                <description><![CDATA[Returns the DTO with the requested report data.]]></description>
+            </return>
+        </method>
+		<method name="RenderReport" type="abstract">
+            <description><![CDATA[This method returns the requested report in the passed format.]]></description>
+            <params>
+            	<param name="dto" type="TDProject_Report_Common_ValueObjects_ParameterData">
+            		<description><![CDATA[The data of the requested report]]></description>
+            	</param>
+            </params>
+            <return type="TDProject_Report_Common_ValueObjects_PreviewData">
+                <description><![CDATA[The DTO with the report data]]></description>
+            </return>
+        </method>
+		<method name="saveReport" type="abstract">
+			<description><![CDATA[This method saves the passed report.]]></description>
+			<params>
+				<param name="lvo" type="TDProject_Report_Common_ValueObjects_ReportLightValue">
+					<description><![CDATA[Holds the LVO with the report data]]></description>
+				</param>
+			</params>
+			<return type="TechDivision_Lang_Integer">
+				<description><![CDATA[Returns the ID of the report.]]></description>
+			</return>
+		</method>
+		<method name="deleteReport" type="abstract">
+            <description><![CDATA[This method deletes the report with the ID passed as parameter.]]></description>
+            <params>
+                <param name="reportId" type="TechDivision_Lang_Integer">
+                    <description><![CDATA[Holds the ID of the report to delete]]></description>
+                </param>
+            </params>
+            <return type="void">
+                <description><![CDATA[Returns nothing.]]></description>
+            </return>
+        </method>
+		<method name="getProjectViewData" type="abstract">
+            <description><![CDATA[This method returns the requested project as DTO and the available reports.]]></description>
+            <params>
+            	<param name="projectId" type="TechDivision_Lang_Integer">
+            		<description><![CDATA[The ID of the requested project]]></description>
+            	</param>
+            </params>
+            <return type="TDProject_Report_Common_ValueObjects_ReportValue">
+                <description><![CDATA[Returns the DTO with the requested project data and the available reports.]]></description>
+            </return>
+        </method>
+		<method name="getReportFieldViewData" type="abstract">
+			<description><![CDATA[This method returns the report field with the ID passed as parameter.]]></description>
+			<params>
+				<param name="reportFieldId" type="TechDivision_Lang_Integer" default="null">
+					<description><![CDATA[Holds the ID of the report field to load the data for]]></description>
+				</param>
+			</params>
+			<return type="TDProject_Report_Common_ValueObjects_ReportFieldViewData">
+				<description><![CDATA[Returns a DTO initialized with the data of the requested report field.]]></description>
+			</return>
+		</method>
+		<method name="saveReportField" type="abstract">
+			<description><![CDATA[This method saves the passed report field.]]></description>
+			<params>
+				<param name="lvo" type="TDProject_Report_Common_ValueObjects_ReportFieldLightValue">
+					<description><![CDATA[Holds the LVO with the report field data]]></description>
+				</param>
+			</params>
+			<return type="TechDivision_Lang_Integer">
+				<description><![CDATA[Returns the ID of the report field.]]></description>
+			</return>
+		</method>
+		<method name="deleteReportField" type="abstract">
+            <description><![CDATA[This method deletes the report field with the ID passed as parameter.]]></description>
+            <params>
+                <param name="reportFieldId" type="TechDivision_Lang_Integer">
+                    <description><![CDATA[Holds the ID of the report field to delete]]></description>
+                </param>
+            </params>
+            <return type="void">
+                <description><![CDATA[Returns nothing.]]></description>
+            </return>
+        </method>
+		<method name="getReportRenderedViewData" type="abstract">
+			<description><![CDATA[This method returns the download information for the rendered report with the ID passed as parameter.]]></description>
+			<params>
+				<param name="reportRenderedId" type="TechDivision_Lang_Integer">
+					<description><![CDATA[Holds the ID of the rendered report to download]]></description>
+				</param>
+			</params>
+			<return type="TDProject_Report_Common_ValueObjects_ReportRenderedViewData">
+				<description><![CDATA[Returns a DTO initialized with the data of the rendered report.]]></description>
+			</return>
+		</method>
+	</methods>
+</processor>

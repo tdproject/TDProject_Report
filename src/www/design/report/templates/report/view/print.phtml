@@ -1,0 +1,66 @@
+<?php
+ 
+/**
+ * TDProject_Report
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ */
+
+?>
+<script type="text/javascript" charset="utf-8">
+<!--
+
+$(document).ready(function() {
+    loadInputFields(<?php echo $this->getReportId() ?>);
+});
+
+/**
+ * Invokes the method to initialize the HTML for creating a new report field
+ * and replaces the HTML of the div container with the ID #reportField with 
+ * the HTML code returned.
+ *
+ * @param int reportId The ID of the report to create the field for
+ * @return boolean
+ */
+function loadInputFields(reportId) {
+
+	$.ajax({
+	    type: "GET",
+	    url: "?path=/renderReport&reportId=" + reportId,
+	    success: function(data) {
+	        $('#<?php echo $this->getBlockName() ?>').html(data);
+	    }
+    });
+    
+	return false;
+}
+
+/**
+ * Invokes the method to initialize the HTML for creating a new report field
+ * and replaces the HTML of the div container with the ID #reportField with 
+ * the HTML code returned.
+ *
+ * @param int reportId The ID of the report to create the field for
+ * @return boolean
+ */
+function printReport() {
+
+	$.ajax({
+	    type: "GET",
+	    url: "?path=/renderReport&method=renderReport",
+	    data: $('#reportInputForm').serialize(),
+	    success: function(data) {
+	        $('#print').html(data);
+	    }
+    });
+    
+	return false;
+}
+
+//-->
+</script>
+<div id="<?php echo $this->getBlockName() ?>"></div>

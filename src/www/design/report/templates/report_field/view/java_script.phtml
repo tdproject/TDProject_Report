@@ -1,0 +1,35 @@
+<?php
+ 
+/**
+ * TDProject_Project
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ */
+
+?>
+<script type="text/javascript">
+
+/**
+ * Saves the report field with the data of the passed form name.
+ *
+ * @return boolean
+ */
+function saveReportField() {
+
+	$.ajax({
+	    type: "POST",
+	    url: "?path=/reportField&method=save",
+	    data: $('#reportFieldForm').serialize(),
+	    success: function(data) {
+	        $('#reportFieldForm').html(data);
+	    }
+    });
+    
+	return false;
+}
+
+</script>

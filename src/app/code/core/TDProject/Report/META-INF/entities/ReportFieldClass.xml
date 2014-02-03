@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- 
+/**
+ * TDProject_Report
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Open Software License (OSL 3.0)
+ * that is available through the world-wide-web at this URL:
+ * http://opensource.org/licenses/osl-3.0.php
+ */
+-->
+<entity xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:noNamespaceSchemaLocation="http://www.techdivision.com/schema/entity-1.0.0.xsd"
+	name="ReportFieldClass" type="entity">
+    <description>This class represents an object oriented way to manipulate data in the database.</description>
+    <members>
+        <member name="reportFieldClassId" sqlname="report_field_class_id" type="Integer" initial="0"/>
+        <member name="type" sqlname="type" type="String" initial="null" to-string="true" />
+    	<member name="classBlock" sqlname="class_block" type="String" initial="null"/>
+    	<member name="classDataSource" sqlname="class_data_source" type="String" initial="null"/>
+    	<member name="classValidation" sqlname="class_validation" type="String" initial="null"/>
+    	<member name="classConverter" sqlname="class_converter" type="String" initial="null"/>
+	</members>
+	<querys>
+		<query>
+			<description><![CDATA[Returns all classes of all types.]]></description>
+			<method name="findAll">
+				<params/>
+			</method>
+			<result-type>ArrayList</result-type>
+			<sql><![CDATA[SELECT report_field_class_id FROM report_field_class ORDER BY type]]></sql>
+		</query>
+	</querys>
+	<tables>
+		<table type="InnoDB" default-charset="utf8" collate="utf8_unicode_ci" auto-increment="1" name="report_field_class">
+			<keys>
+				<pk name="report_field_class_pk" field="report_field_class_id"/>
+			</keys>	
+			<fields>
+				<field name="report_field_class_id" type="int" length="10" nullable="false" autoincrement="true"/>
+				<field name="type" type="varchar" length="50" nullable="false"/>
+				<field name="class_block" type="varchar" length="100" nullable="false"/>
+				<field name="class_data_source" type="varchar" length="100" nullable="true"/>
+				<field name="class_validation" type="varchar" length="100" nullable="true"/>
+				<field name="class_converter" type="varchar" length="100" nullable="true"/>
+			</fields>
+			<initial-data>
+				<rows>
+					<row>
+						<col name="report_field_class_id">1</col>
+						<col name="type">projectSelector</col>
+						<col name="class_block">TDProject_Report_Block_Widget_Element_GenericSelector</col>
+						<col name="class_data_source">TDProject_Report_Model_Widget_ProjectSelectorSource</col>
+						<col name="class_validation">TDProject_Report_Block_Widget_Validator_Integer</col>
+						<col name="class_converter">TDProject_Report_Model_Widget_Converter_Integer</col>
+					</row>
+                    <row>
+                        <col name="report_field_class_id">2</col>
+                        <col name="type">booleanSelector</col>
+                        <col name="class_block">TDProject_Report_Block_Widget_Element_GenericSelector</col>
+                        <col name="class_data_source">TDProject_Report_Model_Widget_BooleanSelectorSource</col>
+                        <col name="class_validation">TDProject_Report_Block_Widget_Validator_Boolean</col>
+                        <col name="class_converter">TDProject_Report_Model_Widget_Converter_Integer</col>
+                    </row>
+                    <row>
+                        <col name="report_field_class_id">3</col>
+                        <col name="type">datePicker</col>
+                        <col name="class_block">TDProject_Report_Block_Widget_Element_DatePicker</col>
+                        <col name="class_validation">TDProject_Report_Block_Widget_Validator_Date</col>
+                        <col name="class_converter">TDProject_Report_Model_Widget_Converter_DateToMilliseconds</col>
+                    </row>
+                    <row>
+                        <col name="report_field_class_id">4</col>
+                        <col name="type">userSelector</col>
+                        <col name="class_block">TDProject_Report_Block_Widget_Element_GenericSelector</col>
+                        <col name="class_data_source">TDProject_Report_Model_Widget_UserSelectorSource</col>
+                        <col name="class_validation">TDProject_Report_Block_Widget_Validator_Integer</col>
+                        <col name="class_converter">TDProject_Report_Model_Widget_Converter_Integer</col>
+                    </row>
+                    <row>
+                        <col name="report_field_class_id">5</col>
+                        <col name="type">taskSelector</col>
+                        <col name="class_block">TDProject_Report_Block_Widget_Element_TaskSelector</col>
+                        <col name="class_data_source">TDProject_Report_Model_Widget_ProjectSelectorSource</col>
+                        <col name="class_validation">TDProject_Report_Block_Widget_Validator_Integer</col>
+                        <col name="class_converter">TDProject_Project_Model_Widget_Converter_Task</col>
+                    </row>
+				</rows>
+			</initial-data>
+		</table>
+	</tables>
+</entity>

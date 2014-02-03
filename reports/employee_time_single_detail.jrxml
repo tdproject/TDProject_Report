@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Mitarbeiterzeiten, pro Mitarbeiter Zeiten" language="groovy" pageWidth="802" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<property name="ireport.jasperserver.reportUnit" value="/reports/tdproject/employee_time_single"/>
+	<property name="ireport.jasperserver.url" value="http://project.tdintern.de:8080/jasperserver/services/repository"/>
+	<parameter name="USER_ID" class="java.lang.Integer"/>
+	<parameter name="FROM_DATE" class="java.util.Date"/>
+	<parameter name="TO_DATE" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[SELECT
+    t2.name AS task,
+    t2.billable AS billable,
+    t1.project_id_fk,
+    t1.project_name,
+    t1.description AS description,
+    FROM_UNIXTIME(t1.from, '%Y-%m-%d %H:%i') AS started,
+    FROM_UNIXTIME(t1.until, '%Y-%m-%d %H:%i') AS ended,
+    ((t1.until - t1.from) / 60) AS used
+FROM
+    task_user t1, task t2
+WHERE
+    t1.user_id_fk = $P{USER_ID} AND
+    t2.task_id = t1.task_id_fk AND
+    t1.from > UNIX_TIMESTAMP($P{FROM_DATE}) AND
+    t1.until < UNIX_TIMESTAMP($P{TO_DATE}) + 86400 AND
+    t1.task_id_fk = t2.task_id
+ORDER BY
+    t2.billable, t1.from;]]>
+	</queryString>
+	<field name="task" class="java.lang.String"/>
+	<field name="billable" class="java.lang.Integer"/>
+	<field name="project_id_fk" class="java.lang.Long"/>
+	<field name="project_name" class="java.lang.String"/>
+	<field name="description" class="java.lang.String"/>
+	<field name="started" class="java.lang.String"/>
+	<field name="ended" class="java.lang.String"/>
+	<field name="used" class="java.math.BigDecimal"/>
+	<variable name="COMPLETE_SUM" class="java.math.BigDecimal" calculation="Sum">
+		<variableExpression><![CDATA[$F{used}]]></variableExpression>
+		<initialValueExpression><![CDATA[new BigDecimal(0)]]></initialValueExpression>
+	</variable>
+	<variable name="PAGE_SUM" class="java.lang.Integer" calculation="Sum">
+		<variableExpression><![CDATA[$F{used}]]></variableExpression>
+		<initialValueExpression><![CDATA[]]></initialValueExpression>
+	</variable>
+	<variable name="GROUP_SUM" class="java.lang.Integer" resetType="Group" resetGroup="Billable" calculation="Sum">
+		<variableExpression><![CDATA[$F{used}]]></variableExpression>
+	</variable>
+	<group name="Billable">
+		<groupExpression><![CDATA[$F{billable}]]></groupExpression>
+		<groupHeader>
+			<band height="23">
+				<textField>
+					<reportElement x="33" y="3" width="398" height="20"/>
+					<textElement>
+						<font fontName="DejaVu Sans" size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{billable} ) ? "Abrechenbar" : "Nicht abrechenbar"]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupHeader>
+		<groupFooter>
+			<band height="22">
+				<textField evaluationTime="Auto">
+					<reportElement x="339" y="0" width="463" height="20"/>
+					<textElement textAlignment="Right">
+						<font fontName="DejaVu Sans" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA[( $F{billable} ) ? "Abrechenbar " + $V{GROUP_SUM} : "Nicht abrechenbar " + $V{GROUP_SUM}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="37" splitType="Stretch">
+			<staticText>
+				<reportElement x="339" y="13" width="236" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Tätigkeit]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="186" y="13" width="153" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Task]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="575" y="13" width="100" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[von]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="675" y="13" width="100" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[bis]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="775" y="13" width="27" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[min]]></text>
+			</staticText>
+			<line>
+				<reportElement x="0" y="33" width="802" height="1"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="13" width="27" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[ID]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="31" y="13" width="149" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Projekt]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="339" y="3" width="236" height="18"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="186" y="0" width="153" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{task}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="575" y="3" width="100" height="17"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{started}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="675" y="3" width="100" height="17"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{ended}]]></textFieldExpression>
+			</textField>
+			<textField pattern="###0;-###0">
+				<reportElement x="775" y="2" width="27" height="18"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{used}.setScale(0, BigDecimal.ROUND_UP)]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="27" height="20"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_id_fk}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="0" width="149" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="9"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{project_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="24" splitType="Stretch">
+			<line>
+				<reportElement x="0" y="0" width="802" height="1"/>
+			</line>
+			<textField pattern="">
+				<reportElement x="568" y="3" width="234" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Übertrag " + $V{PAGE_SUM}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+	<lastPageFooter>
+		<band height="30">
+			<textField>
+				<reportElement x="313" y="0" width="489" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Gesamtaufwand (h) " + new BigDecimal($V{COMPLETE_SUM}/60).setScale(2, BigDecimal.ROUND_UP)]]></textFieldExpression>
+			</textField>
+		</band>
+	</lastPageFooter>
+</jasperReport>

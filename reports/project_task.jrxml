@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Projekt" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="11"/>
+	<property name="ireport.jasperserver.reportUnit" value="/reports/tdproject/project_task"/>
+	<property name="ireport.jasperserver.url" value="http://10.0.2.35:8080/jasperserver/services/repository"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
+		<defaultValueExpression><![CDATA["repo:/reports/tdproject/project_task_files/"]]></defaultValueExpression>
+	</parameter>
+	<parameter name="FROM_DATE" class="java.util.Date"/>
+	<parameter name="TO_DATE" class="java.util.Date"/>
+	<parameter name="PROJECT_ID" class="java.lang.Integer"/>
+	<parameter name="BILLABLE" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[SELECT t1.*, t2.task_id_fk, t3.* FROM project t1, project_task t2, company t3 WHERE t1.project_id = $P{PROJECT_ID} AND t2.project_id_fk = t1.project_id AND t3.company_id = t1.company_id_fk]]>
+	</queryString>
+	<field name="project_id" class="java.lang.Integer"/>
+	<field name="project_id_fk" class="java.lang.Integer"/>
+	<field name="company_id_fk" class="java.lang.Integer"/>
+	<field name="template_id_fk" class="java.lang.Integer"/>
+	<field name="name" class="java.lang.String"/>
+	<field name="task_id_fk" class="java.lang.Integer"/>
+	<field name="company_id" class="java.lang.Integer"/>
+	<field name="phone" class="java.lang.String"/>
+	<field name="email" class="java.lang.String"/>
+	<field name="telefax" class="java.lang.String"/>
+	<variable name="REPORTING_TIME" class="java.lang.String" incrementType="Page">
+		<variableExpression><![CDATA[$P{FROM_DATE}]]></variableExpression>
+	</variable>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="65" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="12" width="467" height="34"/>
+				<textElement>
+					<font fontName="DejaVu Sans" size="24" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+			</textField>
+			<image>
+				<reportElement x="602" y="0" width="200" height="46"/>
+				<imageExpression><![CDATA["repo:signatur_logo.gif"]]></imageExpression>
+			</image>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="27" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="0" width="802" height="20"/>
+				<textElement markup="none">
+					<font fontName="DejaVu Sans" size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Abrechnungszeitraum: " + DateFormat.getDateInstance(DateFormat.MEDIUM).format($P{FROM_DATE}) + " - " + DateFormat.getDateInstance(DateFormat.MEDIUM).format($P{TO_DATE})]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageHeader>
+	<detail>
+		<band height="409" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="0" width="802" height="409"/>
+				<subreportParameter name="BILLABLE">
+					<subreportParameterExpression><![CDATA[$P{BILLABLE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TO_DATE">
+					<subreportParameterExpression><![CDATA[$P{TO_DATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="TASK_ID">
+					<subreportParameterExpression><![CDATA[$F{task_id_fk}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="FROM_DATE">
+					<subreportParameterExpression><![CDATA[$P{FROM_DATE}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA["repo:tasks"]]></subreportExpression>
+			</subreport>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band height="42" splitType="Stretch">
+			<textField>
+				<reportElement x="329" y="22" width="80" height="20"/>
+				<textElement textAlignment="Right">
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Page "+$V{PAGE_NUMBER}+" of"]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement x="409" y="22" width="40" height="20"/>
+				<textElement>
+					<font fontName="DejaVu Sans"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+</jasperReport>
